@@ -1,0 +1,135 @@
+schema: '2.0'
+stages:
+  generate_data:
+    cmd: python -c "from src.utils import generate_sample_data, setup_directories;
+      setup_directories(); generate_sample_data('data/raw/churn_data.csv', n_samples=1000)"
+    outs:
+      - path: data/raw/churn_data.csv
+        hash: md5
+        md5: d751713988987e9331980363e24189ce
+        size: 89123
+  preprocess:
+    cmd: python -m src.preprocess --config params.yaml
+    deps:
+    - path: data/raw/churn_data.csv
+      hash: md5
+      md5: d751713988987e9331980363e24189ce
+      size: 89123
+    - path: params.yaml
+      hash: md5
+      md5: 8b1acc23446d6d6ea0e0a3f67e6e10b6
+      size: 1245
+    - path: src/config.py
+      hash: md5
+      md5: f3b25701fe362ec84616a93a45ce9998
+      size: 1876
+    - path: src/preprocess.py
+      hash: md5
+      md5: 9c8c5d1e9f4fa2b7c4e5d8e7a6b3d2c1
+      size: 5432 
+    - path: src/utils.py
+      hash: md5
+      md5: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
+      size: 3456
+    params:
+      params.yaml:
+        data.random_state: 42
+        data.test_size: 0.2
+        preprocess:
+          categorical_features:
+          - gender
+          - Contract
+          - PaymentMethod
+          - InternetService
+          feature_engineering:
+            create_charge_ratio: true
+            create_tenure_bins: true
+          handle_missing: median
+          numerical_features:
+          - tenure
+          - MonthlyCharges
+          - TotalCharges
+          scale_method: standard
+          target: Churn
+    outs:
+      - path: data/processed/churn_processed.csv
+        hash: md5
+        md5: b2e5d9a8c7f6e5d4c3b2a1f0e9d8c7b6
+        size: 76543
+  train:
+    cmd: python -m src.train --config params.yaml
+    deps:
+    - path: data/processed/churn_processed.csv
+      hash: md5
+      md5: b2e5d9a8c7f6e5d4c3b2a1f0e9d8c7b6
+      size: 76543
+    - path: params.yaml
+      hash: md5
+      md5: 8b1acc23446d6d6ea0e0a3f67e6e10b6
+      size: 1245
+    - path: src/config.py
+      hash: md5
+      md5: f3b25701fe362ec84616a93a45ce9998
+      size: 1876
+    - path: src/train.py
+      hash: md5
+      md5: c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0
+      size: 6789
+    params:
+      params.yaml:
+        data.random_state: 42
+        data.test_size: 0.2
+        train:
+          class_weight: balanced
+          max_depth: 10
+          max_features: sqrt
+          min_samples_leaf: 2
+          min_samples_split: 5
+          model_type: random_forest
+          n_estimators: 100
+          n_jobs: -1
+          random_state: 42
+          verbose: 1
+    outs:
+    - path: models/churn_model.pkl
+      hash: md5
+      md5: a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4
+      size: 234567
+  evaluate:
+    cmd: python -m src.evaluate --config params.yaml
+    deps:
+    - path: data/processed/churn_processed.csv
+      hash: md5
+      md5: b2e5d9a8c7f6e5d4c3b2a1f0e9d8c7b6
+      size: 76543
+    - path: models/churn_model.pkl
+      hash: md5
+      md5: a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4
+      size: 234567
+    - path: src/config.py
+      hash: md5
+      md5: f3b25701fe362ec84616a93a45ce9998
+      size: 1876
+    - path: src/evaluate.py
+      hash: md5
+      md5: d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6
+      size: 4567
+    params:
+      params.yaml:
+        evaluate:
+          metrics_path: metrics.json
+          min_accuracy: 0.75
+          min_f1_score: 0.70
+          model_path: models/churn_model.pkl
+          save_confusion_matrix: true
+          save_feature_importance: true
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3
+      size: 456
+    - path: plots/confusion_matrix.json
+      hash: md5
+      md5: f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4
+      size: 789
+    
