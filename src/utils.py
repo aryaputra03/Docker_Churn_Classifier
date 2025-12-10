@@ -223,4 +223,83 @@ def load_metrics(input_path: str) -> dict:
     logger.info(f"Metrics loaded from {input_path}")
     return metrics
 
-def print_metrics(metrics:)
+def print_metrics(metrics: dict, title: str = 'Metrics') -> None:
+    """
+    Pretty print metrics to console
+    
+    Args:
+        metrics: Dictionary of metrics
+        title: Title to display
+    """
+    print("\n" + "="*60)
+    print(f"{title}")
+    print("="*60)
+    for key, value in metrics.items():
+        if isinstance(value, (int, float)) and key != 'confusion_matrix':
+            print(f"{key:20s}:{value:.4f}")
+        elif key == 'confusion_matrix':
+            print(f"\n{key}:")
+            if isinstance(value, list):
+                for row in value:
+                    print(f"  {row}")
+    print("="*60 + "\n")
+
+def validate_dataframe(
+        df = pd.DataFrame(),
+        required_columns: Optional[List[str]] = None,
+        allow_missing: bool = False
+) -> bool:
+    """
+    Validate DataFrame structure and content
+    
+    Args:
+        df: DataFrame to validate
+        required_columns: List of required column names
+        allow_missing: Whether to allow missing values
+        
+    Returns:
+        True if valid
+        
+    Raises:
+        ValueError: If validation fails
+    """
+    if df is None or df.empty:
+        raise ValueError("DataFrame is empty or None.")
+    
+    if required_columns:
+        missing_columns = set(required_columns) - set(df.columns)
+        if missing_columns:
+            raise ValueError(f"Missing required columns: {missing_columns}")
+    
+    if not allow_missing and df.isnull.any().any():
+        null_count = df.isnull().sum()
+        null_cols = null_count[null_count > 0]
+        raise ValueError(f"DataFrame contains missing values in columns: {null_cols.to_dict()}")
+    
+    logger.info("Dataframe validation passed.")
+    return True
+
+class Timer:
+    """
+    Simple context manager for timing code execution
+    
+    Example:
+        >>> with Timer("Data loading"):
+        >>>     df = pd.read_csv("data.csv")
+    """
+    def __init__(self, name: str = 'Operation'):
+        self.name = name
+        self.start_time = None
+
+    def __enter__(self):
+        import time
+        self.start_time = time.time()
+        logger.info(f"Starting: {self.name}")
+        return self
+    
+    def __exit__(self, *args):
+        import time
+        elapsed = time.time() - self.start_time
+        logger.info(f"Completed: {self.name} in {elapsed:.2f} seconds")
+
+        
