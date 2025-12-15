@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}--pip-lint-${{ hasFile( 'requirements-dev.txt' ) }}
+          key: ${{ runner.os }}--pip-lint-${{ hashFiles( 'requirements-dev.txt' ) }}
           restore-keys: |
             ${{ runner.os }}-pip-lint-
             ${{ runner.os }}-pip-
@@ -87,7 +87,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hasFile('requirements-dev.txt') }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}-${{ hashFiles('requirements-dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
 
@@ -341,10 +341,10 @@ jobs:
               "${{ needs.test.result}}" == "failure" ]]; then
           echo "CI Pipeline failed"
           exit 1
-        elif [[ "${{ needs["docker-build"].result }}" == "failure" || \
-                "${{ needs["integration-test"].result}}" == "failure" ]]; then
-          echo "CI Pipeline failed"
-          exit 1
+        elif [[ "${{ needs.docker-build.result }}" == "failure" || \
+                  "${{ needs.integration-test.result }}" == "failure" ]]; then
+            echo "CD Pipeline Failed"
+            exit 1
         else  
           echo "CI Pipeline successfully"
         fi
