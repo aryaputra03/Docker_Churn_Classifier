@@ -77,7 +77,7 @@ def test_confusion_metrics_shape():
 
     metrics = calculate_metrics(y_true, y_pred)
 
-    cm = metrics['confusion_metrix']
+    cm = metrics["confusion_matrix"]
     assert len(cm) == 2
     assert len(cm[0]) == 2
 
@@ -87,7 +87,7 @@ def test_confusion_matrix_values():
     y_pred = np.array([1, 0, 1, 0])
 
     metrics = calculate_metrics(y_true, y_pred)
-    cm = np.array(metrics['confusion_metrix'])
+    cm = np.array(metrics["confusion_matrix"])
 
     assert cm[0,0] == 1
     assert cm[1,0] == 1
