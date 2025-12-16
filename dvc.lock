@@ -9,13 +9,13 @@ stages:
         md5: d751713988987e9331980363e24189ce
         size: 89123
   preprocess:
-    cmd: python -m src.preprocess --config params.yaml
+    cmd: python -m src.preprocess --config params.yml
     deps:
     - path: data/raw/churn_data.csv
       hash: md5
       md5: d751713988987e9331980363e24189ce
       size: 89123
-    - path: params.yaml
+    - path: params.yml
       hash: md5
       md5: 8b1acc23446d6d6ea0e0a3f67e6e10b6
       size: 1245
@@ -32,7 +32,7 @@ stages:
       md5: a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
       size: 3456
     params:
-      params.yaml:
+      params.yml:
         data.random_state: 42
         data.test_size: 0.2
         preprocess:
@@ -57,13 +57,13 @@ stages:
         md5: b2e5d9a8c7f6e5d4c3b2a1f0e9d8c7b6
         size: 76543
   train:
-    cmd: python -m src.train --config params.yaml
+    cmd: python -m src.train --config params.yml
     deps:
     - path: data/processed/churn_processed.csv
       hash: md5
       md5: b2e5d9a8c7f6e5d4c3b2a1f0e9d8c7b6
       size: 76543
-    - path: params.yaml
+    - path: params.yml
       hash: md5
       md5: 8b1acc23446d6d6ea0e0a3f67e6e10b6
       size: 1245
@@ -76,7 +76,7 @@ stages:
       md5: c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0
       size: 6789
     params:
-      params.yaml:
+      params.yml:
         data.random_state: 42
         data.test_size: 0.2
         train:
@@ -96,7 +96,7 @@ stages:
       md5: a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4
       size: 234567
   evaluate:
-    cmd: python -m src.evaluate --config params.yaml
+    cmd: python -m src.evaluate --config params.yml
     deps:
     - path: data/processed/churn_processed.csv
       hash: md5
@@ -115,7 +115,7 @@ stages:
       md5: d1e2f3g4h5i6j7k8l9m0n1o2p3q4r5s6
       size: 4567
     params:
-      params.yaml:
+      params.yml:
         evaluate:
           metrics_path: metrics.json
           min_accuracy: 0.75
