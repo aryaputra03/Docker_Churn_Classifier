@@ -148,13 +148,17 @@ jobs:
           pip install dvc[s3]
       
       - name: Configure DVC remote (if using S3)
-        if: secrets.AWS_ACCESS_KEY_ID != ''
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          dvc remote modify myremote access_key_id $AWS_ACCESS_KEY_ID
-          dvc remote modify myremote secret_access_key $AWS_SECRET_ACCESS_KEY
+          if [ -n "$AWS_ACCESS_KEY_ID" ]; then
+            dvc remote modify myremote access_key_id $AWS_ACCESS_KEY_ID
+            dvc remote modify myremote secret_access_key $AWS_SECRET_ACCESS_KEY
+            echo "DVC remote configured with AWS credentials"
+          else
+            echo "AWS credentials not found, skipping DVC remote configuration"
+          fi
 
       - name: Pull DVC data
         run: |
@@ -215,11 +219,16 @@ jobs:
         uses: docker/setup-buildx-action@v3
       
       - name: Login to Docker Hub
-        if: secrets.DOCKER_USERNAME != ''
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [ -n "$DOCKER_USERNAME" ] && [ -n "$DOCKER_PASSWORD" ]; then
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            echo "Successfully logged in to Docker Hub"
+          else
+            echo "Docker credentials not found, skipping login"
+          fi
       
       - name: Extract Metadata
         id: meta 
@@ -231,12 +240,23 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
       
+      - name: Check if Docker push is enabled
+        id: check_docker
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        run: |
+          if [ -n "$DOCKER_USERNAME" ]; then
+            echo "push_enabled=true" >> $GITHUB_OUTPUT
+          else
+            echo "push_enabled=false" >> $GITHUB_OUTPUT
+          fi
+      
       - name: Build and Push Production Image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./docker/Dockerfile
-          push: ${{ secrets.DOCKER_USERNAME != '' }}
+          push: ${{ steps.check_docker.outputs.push_enabled == 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache
@@ -247,7 +267,7 @@ jobs:
         with: 
           context: .
           file: ./docker/Dockerfile.dev
-          push: ${{ secrets.DOCKER_USERNAME != '' }}
+          push: ${{ steps.check_docker.outputs.push_enabled == 'true' }}
           tags: ${{ env.DOCKER_IMAGE }}:dev
           cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:dev-buildcache
           cache-to: type=registry,ref=${{ env.DOCKER_IMAGE }}:dev-buildcache,mode=max
@@ -269,11 +289,16 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Login to docker hub 
-        if: secrets.DOCKER_USERNAME != ''
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [ -n "$DOCKER_USERNAME" ] && [ -n "$DOCKER_PASSWORD" ]; then
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            echo "Successfully logged in to Docker Hub"
+          else
+            echo "Docker credentials not found, will build image locally"
+          fi
       
       - name: Pull latest image 
         run: |
