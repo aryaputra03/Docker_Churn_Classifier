@@ -19,7 +19,7 @@ class Config:
     Supports nested configuration with dot notation access.
     
     Example:
-        >>> config = Config("params.yaml")
+        >>> config = Config("params.yml")
         >>> print(config.train['n_estimators'])
         >>> print(config.get('train', 'n_estimators'))
     """

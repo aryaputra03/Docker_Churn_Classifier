@@ -241,7 +241,7 @@ def main():
     parser.add_argument(
         "--config",
         type=str,
-        default="params.yaml",
+        default="params.yml",
         help="Path to configuration file"
     )
     parser.add_argument(

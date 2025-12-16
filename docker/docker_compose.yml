@@ -108,7 +108,7 @@ services:
     volumes:
       - ../data:/app/data
       - ../models:/app/models
-      - ../params.yaml:/app/params.yaml
+      - ../params.yml:/app/params.yml
       - ../metrics.json:/app/metrics.json
       - ../plots:/app/plots
     environment:
