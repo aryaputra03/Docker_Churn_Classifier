@@ -117,7 +117,7 @@ jobs:
           fail_ci_if_error: false
       
       - name: Upload coverage HTML
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.python-version == '3.10'
         with:
           name: coverage-html
@@ -193,7 +193,7 @@ jobs:
         continue-on-error: true
       
       - name: Upload pipeline artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pipeline-outputs
           path: |
