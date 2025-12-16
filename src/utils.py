@@ -189,7 +189,7 @@ def generate_sample_data(output_path: str, n_samples: int = 1000) -> None:
     logger.info(f"Total samples: {n_samples:,}")
     logger.info(f"Churn rate: {churn_rate:.2%}")
     logger.info(f"Missing values: {df.isnull().sum().sum()}")
-    logger.info(f"Features: {List(df.columns)}")
+    logger.info(f"Features: {list(df.columns)}")
 
 def save_metrics(metrics: dict, output_path: str)->None:
     """
