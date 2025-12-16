@@ -7,7 +7,7 @@ import numpy as np
 from pathlib import Path
 import sys
 
-sys.path.insert(str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.evaluate import calculate_metrics, check_thresholds, save_confusion_matrix_plot
 from src.config import Config
