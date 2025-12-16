@@ -14,7 +14,7 @@ on:
 
 env:
   DOCKER_IMAGE: ${{ secrets.DOCKER_IMAGE }}/churn-classifier
-  PYTHON-VERSION: '3.10'
+  PYTHON_VERSION: '3.10'
 
 jobs:
   # ==========================================
@@ -22,7 +22,7 @@ jobs:
   # ==========================================
   lint:
     name: Code Quality Check
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -31,13 +31,13 @@ jobs:
       - name: Set up python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON-VERSION }}
+          python-version: ${{ env.PYTHON_VERSION }}
       
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}--pip-lint-${{ hashFiles( 'requirements-dev.txt' ) }}
+          key: ${{ runner.os }}-pip-lint-${{ hashFiles('requirements-dev.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-lint-
             ${{ runner.os }}-pip-
@@ -71,14 +71,14 @@ jobs:
     needs: lint
 
     strategy:
-       matrix: 
+      matrix: 
         python-version: [ '3.9', '3.10', '3.11' ]
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
       
-      - name: set up python ${{ matrix.python-version }}
+      - name: Set up python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
@@ -123,6 +123,9 @@ jobs:
           name: coverage-html
           path: htmlcov/
 
+  # ==========================================
+  # Job 3: DVC Pipeline (Inside Container)
+  # ==========================================
   dvc-pipeline-inside-container:
     name: DVC Pipeline (Inside Container)
     runs-on: ubuntu-latest
@@ -145,7 +148,7 @@ jobs:
           pip install dvc[s3]
       
       - name: Configure DVC remote (if using S3)
-        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        if: secrets.AWS_ACCESS_KEY_ID != ''
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -165,15 +168,13 @@ jobs:
       - name: Run DVC pipeline in container 
         run: |
           docker run --rm \
-          -v $(pwd)/data:/app/data \
-          -v $(pwd)/models:/app/models \
-          -v $(pwd)/params.yml:/app/params.yml \
-          -v $(pwd)/metrics.json:/app/metrics.json \
-          -w /app \
-          ml-pipeline:latest \
-          bash -c "
-            python -c 'from src.utils import setup_directories, generate_sample_data; setup_directories(); generate_sample_data(\"data/raw/churn_data.csv\", n_samples=1000)' &&
-          "
+            -v $(pwd)/data:/app/data \
+            -v $(pwd)/models:/app/models \
+            -v $(pwd)/params.yml:/app/params.yml \
+            -v $(pwd)/metrics.json:/app/metrics.json \
+            -w /app \
+            ml-pipeline:latest \
+            bash -c "python -c 'from src.utils import setup_directories, generate_sample_data; setup_directories(); generate_sample_data(\"data/raw/churn_data.csv\", n_samples=1000)'"
       
       - name: Display metrics
         run: |
@@ -214,7 +215,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       
       - name: Login to Docker Hub
-        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        if: secrets.DOCKER_USERNAME != ''
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -226,9 +227,9 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=ref, event=branch
-            type=sha, prefix={{branch}}-
-            type=raw, value=latest, enable={{is_default_branch}}
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
       
       - name: Build and Push Production Image
         uses: docker/build-push-action@v5
@@ -238,8 +239,8 @@ jobs:
           push: ${{ secrets.DOCKER_USERNAME != '' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry, ref=${{ env.DOCKER_IMAGE }}:buildcache
-          cache-to: type=registry, ref=${{ env.DOCKER_IMAGE}}:buildcache, mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE }}:buildcache,mode=max
       
       - name: Build Development Image
         uses: docker/build-push-action@v5
@@ -248,12 +249,15 @@ jobs:
           file: ./docker/Dockerfile.dev
           push: ${{ secrets.DOCKER_USERNAME != '' }}
           tags: ${{ env.DOCKER_IMAGE }}:dev
-          cache-from: type=registry, ref=${{ env.DOCKER_IMAGE }}:dev-buildcache
-          cache-to: type=registry, ref=${{ env.DOCKER_IMAGE }}:dev-buildcache, mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE }}:dev-buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE }}:dev-buildcache,mode=max
       
       - name: Image digest
         run: echo ${{ steps.meta.outputs.digest }}
 
+  # ==========================================
+  # Job 5: Integration Test
+  # ==========================================
   integration-test:
     name: Integration Test 
     runs-on: ubuntu-latest
@@ -265,13 +269,13 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Login to docker hub 
-        if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+        if: secrets.DOCKER_USERNAME != ''
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
-      - name: pull latest image 
+      - name: Pull latest image 
         run: |
           docker pull ${{ env.DOCKER_IMAGE }}:latest || docker build -t ${{ env.DOCKER_IMAGE }}:latest -f docker/Dockerfile .
 
@@ -319,42 +323,40 @@ jobs:
             exit 1
           fi
 
+  # ==========================================
+  # Job 6: Status Check
+  # ==========================================
   status-check:
-    name: pipeline status
+    name: Pipeline Status
     runs-on: ubuntu-latest
     needs: [lint, test, docker-build, integration-test]
     if: always()
 
     steps:
-    - name: Check Pipeline status
-      run: |
-        echo "========================================="
-        echo "CI/CD Pipeline Status"
-        echo "========================================="
-        echo "Lint:             ${{ needs.lint.result }}"
-        echo "Test:             ${{ needs.test.result }}"
-        echo "Docker Build:     ${{ needs.docker-build.result }}"
-        echo "Integration Test: ${{ needs.integration-test.result }}"
-        echo "========================================="
+      - name: Check Pipeline status
+        run: |
+          echo "========================================="
+          echo "CI/CD Pipeline Status"
+          echo "========================================="
+          echo "Lint:             ${{ needs.lint.result }}"
+          echo "Test:             ${{ needs.test.result }}"
+          echo "Docker Build:     ${{ needs.docker-build.result }}"
+          echo "Integration Test: ${{ needs.integration-test.result }}"
+          echo "========================================="
 
-        if [[ "${{ needs.lint.result}}" == "failure" || \
-              "${{ needs.test.result}}" == "failure" ]]; then
-          echo "CI Pipeline failed"
-          exit 1
-        elif [[ "${{ needs.docker-build.result }}" == "failure" || \
+          if [[ "${{ needs.lint.result }}" == "failure" || \
+                "${{ needs.test.result }}" == "failure" ]]; then
+            echo "CI Pipeline failed"
+            exit 1
+          elif [[ "${{ needs.docker-build.result }}" == "failure" || \
                   "${{ needs.integration-test.result }}" == "failure" ]]; then
             echo "CD Pipeline Failed"
             exit 1
-        else  
-          echo "CI Pipeline successfully"
-        fi
-    
-    - name: Send notification 
-      if: failure()
-      run: |
-        echo "Pipeline failed - Notification here"
-        
-
-
-  
+          else  
+            echo "CI/CD Pipeline completed successfully"
+          fi
       
+      - name: Send notification 
+        if: failure()
+        run: |
+          echo "Pipeline failed - Add notification logic here"
