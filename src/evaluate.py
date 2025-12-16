@@ -3,14 +3,11 @@ Model Evaluation Module
 
 Evaluates trained model performance with comprehensive metrics.
 """
-
-import pandas as pd
 import numpy as np
 import json
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
-    roc_auc_score, confusion_matrix, classification_report, roc_curve,
-    precision_recall_curve
+    roc_auc_score, confusion_matrix, classification_report
 )
 import argparse
 import sys
@@ -165,8 +162,8 @@ def main():
 
         cm = np.array(metrics['confusion_matrix'])
         logger.info("\nConfusion Matrix:")
-        logger.info(f"                  Predicted")
-        logger.info(f"              Not Churn  Churn")
+        logger.info("                  Predicted")
+        logger.info("              Not Churn  Churn")
         logger.info(f"Actual Not Churn  {cm[0,0]:6d}  {cm[0,1]:6d}")
         logger.info(f"       Churn      {cm[1,0]:6d}  {cm[1,1]:6d}")
 

@@ -8,10 +8,8 @@ Prepares raw data for model training.
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler
-from sklearn.model_selection import train_test_split
 import argparse
 import sys
-from pathlib import Path
 from src.config import Config
 from src.utils import load_data, save_data, logger, Timer
 
@@ -188,7 +186,7 @@ class DataPreprocessor:
             logger.warning("No numerical columns found to scale")
             return df
         
-        logger.info(f"Scalling numerical Columns Found to Scale")
+        logger.info("Scalling numerical Columns Found to Scale")
 
         try:
             df[existing_cols] = self.scaler.fit_transform(df[existing_cols])

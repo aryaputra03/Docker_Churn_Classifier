@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import logging
-from typing import Optional, Tuple, List
+from typing import Optional, List
 import json
 
 logging.basicConfig(

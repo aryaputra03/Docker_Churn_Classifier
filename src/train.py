@@ -76,7 +76,7 @@ class ModelTrainer:
         else:
             raise ValueError(f"Unsupported model type: {self.model_type}")
         
-        logger.info(f"  Model parameters:")
+        logger.info("  Model parameters:")
         for key, value in self.model.get_params().items():
             if value is not None:
                 logger.info(f"    {key}: {value}")
@@ -233,14 +233,14 @@ def prepare_data(df: pd.DataFrame, config: Config):
             stratify=y_temp
         )
 
-        logger.info(f"\nData Split:")
+        logger.info("\nData Split:")
         logger.info(f"  Training:   {len(X_train):,} samples ({len(X_train)/len(X)*100:.1f}%)")
         logger.info(f"  Validation: {len(X_val):,} samples ({len(X_val)/len(X)*100:.1f}%)")
         logger.info(f"  Test:       {len(X_test):,} samples ({len(X_test)/len(X)*100:.1f}%)")
         logger.info(f"  Features:   {X.shape[1]}")
 
         train_dist = np.bincount(y_train) /len(y_train)*100
-        logger.info(f"\nClass Distribution (Training):")
+        logger.info("\nClass Distribution (Training):")
         for i,pct in enumerate(train_dist):
             logger.info(f"  Class {i}: {pct:.1f}%")
         
