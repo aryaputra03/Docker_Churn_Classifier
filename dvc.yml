@@ -7,13 +7,13 @@ stages:
           persist: false
   
   preprocess:
-    cmd: python -m src.preprocess --config params.yaml
+    cmd: python -m src.preprocess --config params.yml
     deps:
       - data/raw/churn_data.csv
       - src/preprocess.py
       - src/config.py
       - src/utils.py
-      - params.yaml
+      - params.yml
     params:
       - preprocess
       - data.test_size
@@ -24,12 +24,12 @@ stages:
         persist: false
   
   train:
-    cmd: python -m src.train --config params.yaml
+    cmd: python -m src.train --config params.yml
     deps:
       - data/processed/churn_processed.csv
       - src/train.py
       - src/config.py
-      - params.yaml
+      - params.yml
     params:
       - train
       - data.test_size
@@ -40,7 +40,7 @@ stages:
           persist: true
   
   evaluate:
-    cmd: python -m src.evaluate --config params.yaml
+    cmd: python -m src.evaluate --config params.yml
     deps:
       - data/processed/churn_processed.csv
       - models/churn_model.pkl
