@@ -862,14 +862,6 @@ docker system prune -a
 docker build --no-cache -t churn-classifier:latest -f docker/Dockerfile .
 ```
 
-### Getting Help
-
-- 📖 Check [Documentation](docs/)
-- 🐛 Open an [Issue](https://github.com/yourusername/churn-classification-mlops/issues)
-- 💬 Join [Discussions](https://github.com/yourusername/churn-classification-mlops/discussions)
-
----
-
 ## 📖 Additional Resources
 
 ### Documentation
@@ -907,9 +899,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👥 Authors
 
-- **Your Name** - *Initial work* - [YourGitHub](https://github.com/yourusername)
-
-See also the list of [contributors](https://github.com/yourusername/churn-classification-mlops/contributors) who participated in this project.
+- **Stavanger** - *Initial work* - [@aryaputra03](https://github.com/aryaputra03)
 
 ---
 
@@ -925,10 +915,10 @@ See also the list of [contributors](https://github.com/yourusername/churn-classi
 
 ## 📞 Contact
 
-- Email: your.email@example.com
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Profile](https://linkedin.com/in/yourprofile)
-- Project Link: [https://github.com/yourusername/churn-classification-mlops](https://github.com/yourusername/churn-classification-mlops)
+- Email: Aryaganendra45@gmail.com
+- GitHub: [@aryaputra03](https://github.com/aryaputra03)
+- LinkedIn: [aryaputra](https://www.linkedin.com/in/ganendra-geanza-aryaputra-b8071a194)
+- Project Link: [https://github.com/aryaputra03/Docker_Churn_Classifier](https://github.com/aryaputra03/Docker_Churn_Classifier)
 
 ---
 
