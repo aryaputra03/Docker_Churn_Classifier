@@ -94,14 +94,14 @@ echo ""
 echo "Generated files:"
 echo "  - data/processed/churn_processed.csv"
 echo "  - models/churn_model.pkl"
-echo "  - metrics.json"
+echo "  - metrics/metrics.json"
 
 if [ -f "plots/confusion_matrix.json" ]; then
     echo "  - plots/confusion_matrix.json"
 fi
 echo ""
 echo "Next steps:"
-echo "  1. Review metrics.json"
+echo "  1. Review metrics/metrics.json"
 echo "  2. Make predictions: python -m src.predict --input new_data.csv"
 echo "  3. Retrain with different parameters in params.yml"
 echo ""
