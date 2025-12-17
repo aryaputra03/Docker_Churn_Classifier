@@ -97,7 +97,7 @@ clean:  ## Clean generated files
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	find . -type d -name ".coverage" -delete
 	find . -type d -name "htmlcov" -exec rm -rf {} +
-	rm -f metrics.json
+	rm -f metrics/metrics.json
 	@echo "✅ Cleaned!"
 
 clean-data:  ## Clean data files (WARNING: removes generated data)
