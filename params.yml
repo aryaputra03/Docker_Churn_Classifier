@@ -46,7 +46,7 @@ train:
   verbose: 1
 
 evaluate:
-  metrics_path: metrics/metrics.json
+  metrics_path: metrics.json
   model_path: models/churn_model.pkl
 
 
