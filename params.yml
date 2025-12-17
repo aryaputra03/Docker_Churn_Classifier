@@ -10,7 +10,7 @@ data:
 preprocess:
   numerical_features:
     - tenure
-    - MountlyCharges
+    - MonthlyCharges
     - TotalCharges
   
   categorical_features:
