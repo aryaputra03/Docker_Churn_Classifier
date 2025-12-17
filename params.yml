@@ -18,6 +18,7 @@ preprocess:
     - Contract
     - PaymentMethod
     - InternetService
+    - tenure_group
   
   target: Churn
 
