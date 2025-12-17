@@ -175,7 +175,7 @@ jobs:
             -v $(pwd)/data:/app/data \
             -v $(pwd)/models:/app/models \
             -v $(pwd)/params.yml:/app/params.yml \
-            -v $(pwd)/metrics/metrics.json:/app/metrics/metrics.json \
+            -v $(pwd)/metrics:/app/metrics
             -w /app \
             ml-pipeline:latest \
             bash -c "python -c 'from src.utils import setup_directories, generate_sample_data; setup_directories(); generate_sample_data(\"data/raw/churn_data.csv\", n_samples=1000)'"
@@ -299,6 +299,12 @@ jobs:
           else
             echo "Docker credentials not found, will build image locally"
           fi
+
+      - name: Setup directory structure
+        run: |
+          mkdir -p data/raw data/processed models metrics plots
+          rm -rf metrics/metrics.json 2>/dev/null || true
+          echo "Directory structure prepared"
       
       - name: Pull latest image 
         run: |
@@ -327,7 +333,7 @@ jobs:
             -v $(pwd)/data:/app/data \
             -v $(pwd)/models:/app/models \
             -v $(pwd)/params.yml:/app/params.yml \
-            -v $(pwd)/metrics/metrics.json:/app/metrics/metrics.json \
+            -v $(pwd)/metrics:/app/metrics \
             ${{ env.DOCKER_IMAGE }}:latest \
             python -m src.evaluate
       

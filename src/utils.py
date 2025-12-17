@@ -33,7 +33,8 @@ def setup_directories(directories: Optional[List[str]] = None) -> None:
             'data/processed',
             'models',
             'logs',
-            'plots'
+            'plots',
+            'metrics'
         ]
     
     for directory in directories:
