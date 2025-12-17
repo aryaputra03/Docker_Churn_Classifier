@@ -200,6 +200,13 @@ def save_metrics(metrics: dict, output_path: str)->None:
         output_path: Path to save JSON file
     """
     output_path = Path(output_path)
+
+    if output_path.exists() and output_path.is_dir():
+        raise ValueError(
+            f"Invalid output path: {output_path} is a directory, expected a file"
+        )
+    
+    
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, 'w') as f:
