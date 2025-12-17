@@ -83,9 +83,9 @@ else
 fi
 echo ""
 
-if [ -f "metrics.json" ]; then
+if [ -f "metrics/metrics.json" ]; then
     print_step "Final Metrics"
-    cat metrics.json | python -m json.tool
+    cat metrics/metrics.json | python -m json.tool
     echo ""
 fi
 

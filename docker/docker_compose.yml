@@ -11,7 +11,7 @@ services:
       - ../data:/app/data
       - ../models:/app/models
       - ../params.yml:/app/params.yml
-      - ../metrics.json:/app/metrics.json
+      - ../metrics/metrics.json:/app/metrics/metrics.json
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
@@ -46,7 +46,7 @@ services:
       - ../data:/app/data
       - ../models:/app/models
       - ../params.yml:/app/params.yml
-      - ../metrics.json:/app/metrics.json
+      - ../metrics/metrics.json:/app/metrics/metrics.json
       - ../plots:/app/plots
     environment:
       - PYTHONUNBUFFERED=1
@@ -109,7 +109,7 @@ services:
       - ../data:/app/data
       - ../models:/app/models
       - ../params.yml:/app/params.yml
-      - ../metrics.json:/app/metrics.json
+      - ../metrics/metrics.json:/app/metrics/metrics.json
       - ../plots:/app/plots
     environment:
       - PYTHONUNBUFFERED=1

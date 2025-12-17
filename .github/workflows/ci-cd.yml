@@ -175,16 +175,16 @@ jobs:
             -v $(pwd)/data:/app/data \
             -v $(pwd)/models:/app/models \
             -v $(pwd)/params.yml:/app/params.yml \
-            -v $(pwd)/metrics.json:/app/metrics.json \
+            -v $(pwd)/metrics/metrics.json:/app/metrics/metrics.json \
             -w /app \
             ml-pipeline:latest \
             bash -c "python -c 'from src.utils import setup_directories, generate_sample_data; setup_directories(); generate_sample_data(\"data/raw/churn_data.csv\", n_samples=1000)'"
       
       - name: Display metrics
         run: |
-          if [ -f metrics.json ]; then
+          if [ -f metrics/metrics.json ]; then
             echo "Model metrics:"
-            cat metrics.json | python -m json.tool
+            cat metrics/metrics.json | python -m json.tool
           fi
       
       - name: Push DVC data
@@ -198,7 +198,7 @@ jobs:
           name: pipeline-outputs
           path: |
             models/*.pkl
-            metrics.json
+            metrics/metrics.json
             plots/
           retention-days: 30
   
@@ -327,7 +327,7 @@ jobs:
             -v $(pwd)/data:/app/data \
             -v $(pwd)/models:/app/models \
             -v $(pwd)/params.yml:/app/params.yml \
-            -v $(pwd)/metrics.json:/app/metrics.json \
+            -v $(pwd)/metrics/metrics.json:/app/metrics/metrics.json \
             ${{ env.DOCKER_IMAGE }}:latest \
             python -m src.evaluate
       
