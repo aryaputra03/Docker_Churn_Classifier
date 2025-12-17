@@ -340,7 +340,7 @@ jobs:
             exit 1
           fi
 
-          if [ -f metrics.json ]; then
+          if [ -f metrics/metrics.json ]; then
             echo "Metrics file created successfully"
             cat metrics.json
           else  
