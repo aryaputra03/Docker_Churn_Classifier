@@ -175,7 +175,7 @@ jobs:
             -v $(pwd)/data:/app/data \
             -v $(pwd)/models:/app/models \
             -v $(pwd)/params.yml:/app/params.yml \
-            -v $(pwd)/metrics:/app/metrics
+            -v $(pwd)/metrics:/app/metrics \
             -w /app \
             ml-pipeline:latest \
             bash -c "python -c 'from src.utils import setup_directories, generate_sample_data; setup_directories(); generate_sample_data(\"data/raw/churn_data.csv\", n_samples=1000)'"
