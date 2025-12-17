@@ -49,7 +49,7 @@ stages:
     params:
       - evaluate
     metrics:
-      - metrics.json:
+      - metrics/metrics.json:
           cache: false
     plots:
       - plots/confusion_matrix.json:
