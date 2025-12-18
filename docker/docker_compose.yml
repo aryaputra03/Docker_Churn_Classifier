@@ -17,7 +17,7 @@ services:
       - LOG_LEVEL=INFO
     command: python -m src.train
     networks:
-      - ml-networks
+      - ml-network
     restart: on-failure
 
   ml-preprocess:
@@ -33,7 +33,7 @@ services:
       - PYTHONUNBUFFERED=1
     command: python -m src.preprocess
     networks:
-      - ml-networks
+      - ml-network
     restart: on-failure
 
   ml-evaluate:
@@ -52,7 +52,7 @@ services:
       - PYTHONUNBUFFERED=1
     command: python -m src.evaluate
     networks:
-      - ml-networks
+      - ml-network
     restart: on-failure
     depends_on:
       - ml-training
